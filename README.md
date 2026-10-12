@@ -17,7 +17,14 @@ That writes a placeholder `public/form.pdf` with all expected field names.
 
 ## Prefilled values
 
-Edit **`src/config/prefill.ts`** and set any fields you want filled by default (you can use full strings for CNP, cod angajat, IBAN, and CNP titular — they are split into `*_0`, `*_1`, … on export).
+Prefill is baked in at **build time** from **`VITE_PREFILL_JSON`**, so you can deploy defaults without committing personal data to git.
+
+1. **GitHub (production):** In the repo go to **Settings → Secrets and variables → Actions → New repository secret**. Name: `VITE_PREFILL_JSON`. Value: one JSON object, same keys as the form (e.g. `name`, `cnp`, `iban`, …). Use full strings for CNP, cod angajat, IBAN, and CNP titular — they are split into `*_0`, `*_1`, … on export.
+2. **Local dev:** Copy `.env.example` to **`.env.local`** (gitignored), set `VITE_PREFILL_JSON=…`, then restart `npm run dev`.
+
+Re-run the deploy workflow (or push to `main`) after changing the secret.
+
+**Note:** On GitHub Pages the prefilled values are still inside the public JavaScript bundle; they are only hidden from the git repository, not from visitors who inspect the site.
 
 ## Develop
 

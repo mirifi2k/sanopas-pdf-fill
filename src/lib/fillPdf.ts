@@ -5,6 +5,13 @@ import type { FormValues } from '../types/form'
 
 const PDF_ASSET = `${import.meta.env.BASE_URL}form.pdf`
 
+/** Smaller than default so one character fits IBAN segment boxes in form.pdf */
+const IBAN_PDF_FONT_SIZE = 7
+
+function isIbanPdfField(name: string): boolean {
+  return /^iban_\d+$/.test(name)
+}
+
 function setTextField(
   form: ReturnType<PDFDocument['getForm']>,
   name: string,
@@ -13,6 +20,13 @@ function setTextField(
 ) {
   try {
     const field = form.getTextField(name)
+    if (isIbanPdfField(name)) {
+      try {
+        field.setFontSize(IBAN_PDF_FONT_SIZE)
+      } catch {
+        // Field has no /DA entry; keep template appearance.
+      }
+    }
     field.setText(value)
   } catch {
     missing.push(name)
